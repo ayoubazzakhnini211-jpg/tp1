@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Calculator</title>
+<style>
+  :root {
+    --bg: #f2f2f7; --panel: #ffffff; --text: #1c1c1e; --muted: #6e6e73;
+    --key: #e5e5ea; --key-op: #d1e3ff; --key-eq: #0a84ff; --key-eq-text: #ffffff;
+    --error: #d70015; --border: #c7c7cc;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #000000; --panel: #1c1c1e; --text: #f2f2f7; --muted: #98989f;
+      --key: #2c2c2e; --key-op: #1f3a5f; --key-eq: #0a84ff; --key-eq-text: #ffffff;
+      --error: #ff6961; --border: #3a3a3c;
+    }
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; background: var(--bg); color: var(--text);
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+  body { display: flex; justify-content: center; min-height: 100vh; }
+  #app { width: 100%; max-width: 420px; padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+  h1 { margin: 4px 4px 0; font-size: 15px; font-weight: 600; color: var(--muted); }
+  #screen { background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 10px 14px; }
+  #history { min-height: 20px; text-align: right; color: var(--muted); font-size: 15px;
+    overflow-x: auto; white-space: nowrap; }
+  #expr { width: 100%; border: none; outline: none; background: transparent; color: var(--text);
+    text-align: right; font-size: 30px; padding: 4px 0; font-family: inherit; }
+  #expr.error { color: var(--error); font-size: 18px; }
+  #funcs { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; }
+  #funcs button { flex: 0 0 auto; padding: 8px 12px; font-size: 15px; }
+  #keys { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  button { border: none; border-radius: 12px; background: var(--key); color: var(--text);
+    font-size: 22px; padding: 16px 0; cursor: pointer; font-family: inherit; }
+  button:active { filter: brightness(0.85); }
+  button.op { background: var(--key-op); }
+  button.eq { background: var(--key-eq); color: var(--key-eq-text); }
+  #funcs button { background: var(--key-op); }
+</style>
+</head>
+<body>
+<div id="app">
+  <h1>Calculator</h1>
+  <div id="screen">
+    <div id="history"></div>
+    <input id="expr" type="text" inputmode="none" autocomplete="off" autocapitalize="off"
+           spellcheck="false" placeholder="0" aria-label="Expression">
+  </div>
+  <div id="funcs"></div>
+  <div id="keys"></div>
+</div>
+
+<script id="engine">
+// ---- Expression engine: same grammar and operations as the C++ calculator ----
+// (src/operations.cpp and src/expression.cpp). Errors are thrown as CalcError.
+function CalcError(message) { this.message = message; }
+CalcError.prototype = Object.create(Error.prototype);
+
+var OPERATIONS = {
+  add:      { arity: 2, apply: function (x) { return x[0] + x[1]; } },
+  subtract: { arity: 2, apply: function (x) { return x[0] - x[1]; } },
+  multiply: { arity: 2, apply: function (x) { return x[0] * x[1]; } },
+  divide:   { arity: 2, apply: function (x) {
+    if (x[1] === 0) throw new CalcError("division by zero");
+    return x[0] / x[1]; } },
+  power:    { arity: 2, apply: function (x) { return Math.pow(x[0], x[1]); } },
+  modulo:   { arity: 2, apply: function (x) {
+    if (x[1] === 0) throw new CalcError("modulo by zero");
+    return x[0] % x[1]; } },
+  sqrt:     { arity: 1, apply: function (x) {
+    if (x[0] < 0) throw new CalcError("square root of a negative number");
+    return Math.sqrt(x[0]); } },
+  sin:      { arity: 1, apply: function (x) { return Math.sin(x[0]); } },
+  cos:      { arity: 1, apply: function (x) { return Math.cos(x[0]); } },
+  tan:      { arity: 1, apply: function (x) { return Math.tan(x[0]); } },
+  asin:     { arity: 1, apply: function (x) {
+    if (x[0] < -1 || x[0] > 1) throw new CalcError("asin input must be in [-1, 1]");
+    return Math.asin(x[0]); } },
+  acos:     { arity: 1, apply: function (x) {
+    if (x[0] < -1 || x[0] > 1) throw new CalcError("acos input must be in [-1, 1]");
+    return Math.acos(x[0]); } },
+  atan:     { arity: 1, apply: function (x) { return Math.atan(x[0]); } },
+  log:      { arity: 1, apply: function (x) {
+    if (x[0] <= 0) throw new CalcError("log of non-positive number");
+    return Math.log10(x[0]); } },
+  ln:       { arity: 1, apply: function (x) {
+    if (x[0] <= 0) throw new CalcError("ln of non-positive number");
+    return Math.log(x[0]); } },
+  exp:      { arity: 1, apply: function (x) { return Math.exp(x[0]); } },
+  abs:      { arity: 1, apply: function (x) { return Math.abs(x[0]); } },
+  floor:    { arity: 1, apply: function (x) { return Math.floor(x[0]); } },
+  ceil:     { arity: 1, apply: function (x) { return Math.ceil(x[0]); } },
+  // Rounds halves away from zero, like C++ std::round.
+  round:    { arity: 1, apply: function (x) { return Math.sign(x[0]) * Math.round(Math.abs(x[0])); } },
+  factorial: { arity: 1, apply: function (x) {
+    var n = x[0];
+    if (n < 0) throw new CalcError("factorial of negative number");
+    if (n !== Math.floor(n)) throw new CalcError("factorial requires a whole number");
+    if (n > 170) throw new CalcError("factorial overflow");
+    var r = 1;
+    for (var i = 2; i <= n; i++) r *= i;
+    return r; } },
+  cbrt:     { arity: 1, apply: function (x) { return Math.cbrt(x[0]); } },
+  hypot:    { arity: 2, apply: function (x) { return Math.hypot(x[0], x[1]); } }
+};
+
+function applyOperation(name, args) {
+  if (!Object.prototype.hasOwnProperty.call(OPERATIONS, name))
+    throw new CalcError("unknown function '" + name + "'");
+  var op = OPERATIONS[name];
+  if (args.length !== op.arity)
+    throw new CalcError(name + " needs " + op.arity + " argument(s), got " + args.length);
+  return op.apply(args);
+}
+
+// Recursive descent, lowest precedence first:
+//   expr    = term (('+' | '-') term)*
+//   term    = unary (('*' | '/' | '%') unary)*
+//   unary   = '-' unary | '+' unary | power
+//   power   = primary ('^' unary)?      (right-associative, so -2^2 = -4)
+//   primary = number | constant | name '(' args ')' | '(' expr ')'
+function evaluateExpression(text) {
+  var pos = 0;
+
+  function skipSpaces() { while (pos < text.length && /\s/.test(text[pos])) pos++; }
+  function accept(c) {
+    skipSpaces();
+    if (pos < text.length && text[pos] === c) { pos++; return true; }
+    return false;
+  }
+  function isDigit(c) { return c >= "0" && c <= "9"; }
+
+  function expr() {
+    var left = term();
+    for (;;) {
+      if (accept("+")) left = applyOperation("add", [left, term()]);
+      else if (accept("-")) left = applyOperation("subtract", [left, term()]);
+      else return left;
+    }
+  }
+  function term() {
+    var left = unary();
+    for (;;) {
+      if (accept("*")) left = applyOperation("multiply", [left, unary()]);
+      else if (accept("/")) left = applyOperation("divide", [left, unary()]);
+      else if (accept("%")) left = applyOperation("modulo", [left, unary()]);
+      else return left;
+    }
+  }
+  function unary() {
+    if (accept("-")) return -unary();
+    if (accept("+")) return unary();
+    return power();
+  }
+  function power() {
+    var base = primary();
+    if (accept("^")) return applyOperation("power", [base, unary()]);
+    return base;
+  }
+  function primary() {
+    skipSpaces();
+    if (pos >= text.length) throw new CalcError("expression ends too early");
+    var c = text[pos];
+    if (c === "(") {
+      pos++;
+      var value = expr();
+      if (!accept(")")) throw new CalcError("missing closing bracket ')'");
+      return value;
+    }
+    if (isDigit(c) || c === ".") return number();
+    if (/[A-Za-z_]/.test(c)) return nameOrCall();
+    throw new CalcError("unexpected '" + c + "'");
+  }
+  function number() {
+    var start = pos;
+    while (pos < text.length && isDigit(text[pos])) pos++;
+    if (pos < text.length && text[pos] === ".") {
+      pos++;
+      while (pos < text.length && isDigit(text[pos])) pos++;
+    }
+    if (pos < text.length && (text[pos] === "e" || text[pos] === "E")) {
+      var p = pos + 1;
+      if (p < text.length && (text[p] === "+" || text[p] === "-")) p++;
+      if (p < text.length && isDigit(text[p])) {
+        while (p < text.length && isDigit(text[p])) p++;
+        pos = p;
+      }
+    }
+    var s = text.substring(start, pos);
+    var n = Number(s);
+    if (s === "." || isNaN(n)) throw new CalcError("bad number '" + s + "'");
+    return n;
+  }
+  function nameOrCall() {
+    var start = pos;
+    while (pos < text.length && /[A-Za-z0-9_]/.test(text[pos])) pos++;
+    var name = text.substring(start, pos);
+    if (!accept("(")) {
+      if (name === "pi") return Math.PI;
+      if (name === "e") return Math.E;
+      throw new CalcError("unknown name '" + name + "'");
+    }
+    var args = [];
+    if (!accept(")")) {
+      do { args.push(expr()); } while (accept(","));
+      if (!accept(")")) throw new CalcError("missing closing bracket ')'");
+    }
+    return applyOperation(name, args);
+  }
+
+  skipSpaces();
+  if (pos >= text.length) throw new CalcError("empty expression");
+  var result = expr();
+  skipSpaces();
+  if (pos < text.length) throw new CalcError("unexpected '" + text[pos] + "'");
+  if (!isFinite(result)) throw new CalcError("result is not a finite number");
+  return result;
+}
+
+// 12 significant digits, no trailing zeros (like the desktop app).
+function formatNumber(x) {
+  if (Object.is(x, -0)) x = 0;
+  var s = Number(x.toPrecision(12)).toString();
+  return s;
+}
+</script>
+
+<script id="ui">
+(function () {
+  if (typeof document === "undefined") return;   // skipped when tested outside a browser
+
+  var input = document.getElementById("expr");
+  var history = document.getElementById("history");
+
+  function setError(message) {
+    input.classList.add("error");
+    input.value = "Error: " + message;
+  }
+  function clearError() {
+    if (input.classList.contains("error")) {
+      input.classList.remove("error");
+      input.value = "";
+    }
+  }
+  function insert(text) {
+    clearError();
+    var start = input.selectionStart, end = input.selectionEnd;
+    if (start === null || start === undefined) { start = end = input.value.length; }
+    input.value = input.value.slice(0, start) + text + input.value.slice(end);
+    var caret = start + text.length;
+    input.setSelectionRange(caret, caret);
+  }
+  function backspace() {
+    if (input.classList.contains("error")) { clearError(); return; }
+    var start = input.selectionStart, end = input.selectionEnd;
+    if (start !== end) { input.value = input.value.slice(0, start) + input.value.slice(end); input.setSelectionRange(start, start); return; }
+    if (start > 0) {
+      input.value = input.value.slice(0, start - 1) + input.value.slice(end);
+      input.setSelectionRange(start - 1, start - 1);
+    }
+  }
+  function clearAll() { input.classList.remove("error"); input.value = ""; history.textContent = ""; }
+  function equals() {
+    if (input.classList.contains("error")) return;
+    var text = input.value.trim();
+    if (!text) return;
+    try {
+      var result = formatNumber(evaluateExpression(text));
+      history.textContent = text + " =";
+      input.value = result;
+      input.setSelectionRange(result.length, result.length);
+    } catch (e) {
+      if (e instanceof CalcError) { history.textContent = text + " ="; setError(e.message); }
+      else throw e;
+    }
+  }
+
+  function addButton(parent, label, className, action) {
+    var b = document.createElement("button");
+    b.textContent = label;
+    if (className) b.className = className;
+    // pointerdown + preventDefault keeps the caret in the field and avoids the phone keyboard.
+    b.addEventListener("mousedown", function (ev) { ev.preventDefault(); });
+    b.addEventListener("click", action);
+    parent.appendChild(b);
+  }
+
+  var funcs = document.getElementById("funcs");
+  ["sqrt", "cbrt", "sin", "cos", "tan", "asin", "acos", "atan", "log", "ln", "exp",
+   "abs", "floor", "ceil", "round", "factorial", "hypot"].forEach(function (name) {
+    addButton(funcs, name, "", function () { insert(name + "("); });
+  });
+  addButton(funcs, "π", "", function () { insert("pi"); });
+  addButton(funcs, "e", "", function () { insert("e"); });
+  addButton(funcs, "^", "", function () { insert("^"); });
+  addButton(funcs, "%", "", function () { insert("%"); });
+  addButton(funcs, ",", "", function () { insert(","); });
+
+  var keys = document.getElementById("keys");
+  var layout = [
+    ["C", "op", clearAll], ["(", "op", function () { insert("("); }],
+    [")", "op", function () { insert(")"); }], ["÷", "op", function () { insert("/"); }],
+    ["7"], ["8"], ["9"], ["×", "op", function () { insert("*"); }],
+    ["4"], ["5"], ["6"], ["−", "op", function () { insert("-"); }],
+    ["1"], ["2"], ["3"], ["+", "op", function () { insert("+"); }],
+    ["0"], ["."], ["⌫", "op", backspace], ["=", "eq", equals]
+  ];
+  layout.forEach(function (k) {
+    var label = k[0];
+    addButton(keys, label, k[1] || "", k[2] || function () { insert(label); });
+  });
+
+  input.addEventListener("keydown", function (ev) {
+    if (ev.key === "Enter") { ev.preventDefault(); equals(); }
+    else if (ev.key === "Escape") { clearAll(); }
+    else if (input.classList.contains("error") && ev.key.length === 1) { clearError(); }
+  });
+})();
+</script>
+</body>
+</html>
