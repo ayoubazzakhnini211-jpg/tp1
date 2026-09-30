@@ -1,11 +1,201 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ayoub Azzakhnini · Développeur Web</title>
+  <meta name="description" content="Portfolio d'Ayoub Azzakhnini, étudiant développeur web : compétences, travaux et contact.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Ayoub Azzakhnini · Développeur Web">
+  <meta property="og:description" content="Portfolio, compétences et travaux d'Ayoub Azzakhnini.">
+  <meta property="og:image" content="https://tp1-ten-green.vercel.app/assets/ayoub.webp">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231e4ed8'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-family='Arial,sans-serif' font-weight='700' font-size='34' fill='white'%3EA%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="index.css">
+  <script>document.documentElement.classList.add('js');</script>
 </head>
 <body>
-    <h1>bonjour,je suis la version de Ayoub</h1>
+  <a class="skip" href="#main">Aller au contenu</a>
+
+  <header class="header" id="header">
+    <div class="container nav">
+      <a href="#top" class="brand">Ayoub Azzakhnini</a>
+
+      <button class="burger" id="burger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="menu">
+        <span></span><span></span>
+      </button>
+
+      <nav class="menu" id="menu" aria-label="Navigation principale">
+        <a href="#apropos">À propos</a>
+        <a href="#competences">Compétences</a>
+        <a href="#travaux">Travaux</a>
+        <a href="#contact" class="menu-cta">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <section class="hero" id="top">
+      <div class="container hero-grid">
+        <div class="hero-text">
+          <p class="status"><span class="dot"></span>Étudiant en développement web</p>
+          <h1>Ayoub Azzakhnini</h1>
+          <p class="role">Développeur Web</p>
+          <p class="lead">
+            Je conçois des sites web clairs, rapides et adaptés à tous les écrans.
+            Ce portfolio rassemble mes travaux au fil de ma formation.
+          </p>
+          <div class="actions">
+            <a href="#travaux" class="btn btn-primary">Voir mes travaux</a>
+            <a href="https://github.com/ayoubazzakhnini211-jpg" class="btn btn-ghost" target="_blank" rel="noopener">
+              <svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+              GitHub
+            </a>
+          </div>
+        </div>
+
+        <figure class="portrait">
+          <img src="assets/ayoub.webp" alt="Portrait d'Ayoub Azzakhnini" width="1254" height="1254" fetchpriority="high">
+        </figure>
+      </div>
+    </section>
+
+    <section class="section" id="apropos">
+      <div class="container split">
+        <div class="section-head reveal">
+          <p class="eyebrow">À propos</p>
+          <h2>Du code propre, pensé pour l'utilisateur.</h2>
+        </div>
+
+        <div class="prose reveal">
+          <p>
+            Je suis Ayoub, étudiant en développement web. J'aime transformer une idée
+            en une page concrète, lisible et agréable à utiliser, en soignant autant
+            la structure du code que le rendu final.
+          </p>
+          <p>
+            Chaque travail réalisé en formation est versionné sur GitHub et mis en ligne
+            automatiquement avec Vercel. Ce site en est le premier exemple, et il
+            s'enrichira à chaque nouveau projet.
+          </p>
+
+          <dl class="facts">
+            <div><dt>Spécialité</dt><dd>Développement web</dd></div>
+            <div><dt>Statut</dt><dd>Étudiant</dd></div>
+            <div><dt>Code</dt><dd><a href="https://github.com/ayoubazzakhnini211-jpg" target="_blank" rel="noopener">github.com/ayoubazzakhnini211-jpg</a></dd></div>
+          </dl>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-muted" id="competences">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="eyebrow">Compétences</p>
+          <h2>Ma boîte à outils</h2>
+        </div>
+
+        <div class="skills">
+          <div class="skill-group reveal">
+            <h3>Langages</h3>
+            <p>Structure, mise en forme et interactivité.</p>
+            <ul class="chips">
+              <li>HTML5</li>
+              <li>CSS3</li>
+              <li>JavaScript</li>
+            </ul>
+          </div>
+
+          <div class="skill-group reveal">
+            <h3>Outils</h3>
+            <p>Versionner, partager et publier son code.</p>
+            <ul class="chips">
+              <li>Git</li>
+              <li>GitHub</li>
+              <li>Vercel</li>
+            </ul>
+          </div>
+
+          <div class="skill-group reveal">
+            <h3>Savoir-faire</h3>
+            <p>Les bonnes pratiques au quotidien.</p>
+            <ul class="chips">
+              <li>Intégration responsive</li>
+              <li>Versionnage</li>
+              <li>Déploiement continu</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="travaux">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="eyebrow">Travaux</p>
+          <h2>Projets réalisés</h2>
+          <p class="section-sub">Mes travaux de formation, du plus récent au plus ancien.</p>
+        </div>
+
+        <div class="projects">
+          <!-- Nouveau travail : copier un bloc <article> et le coller ici, au-dessus des autres -->
+
+          <article class="project reveal">
+            <span class="project-num">01</span>
+            <div class="project-main">
+              <p class="project-meta">TP1 · 2026</p>
+              <h3>Portfolio personnel</h3>
+              <p>
+                Site vitrine responsive en HTML, CSS et JavaScript, versionné avec Git
+                et déployé automatiquement sur Vercel à chaque mise à jour.
+              </p>
+              <ul class="tags">
+                <li>HTML</li>
+                <li>CSS</li>
+                <li>JavaScript</li>
+                <li>Vercel</li>
+              </ul>
+            </div>
+            <div class="project-links">
+              <a href="https://tp1-ten-green.vercel.app" target="_blank" rel="noopener">Voir le site ↗</a>
+              <a href="https://github.com/ayoubazzakhnini211-jpg/tp1" target="_blank" rel="noopener">Code source ↗</a>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="contact">
+      <div class="container">
+        <div class="contact-card reveal">
+          <p class="eyebrow">Contact</p>
+          <h2>Un stage, un projet, une question ?</h2>
+          <p>
+            Je suis à l'écoute des opportunités et des collaborations.
+            Retrouvez l'ensemble de mon code et de mes projets sur GitHub.
+          </p>
+          <div class="actions">
+            <a href="https://github.com/ayoubazzakhnini211-jpg" class="btn btn-primary" target="_blank" rel="noopener">
+              <svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+              Me suivre sur GitHub
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <p>© <span id="year">2026</span> Ayoub Azzakhnini</p>
+      <a href="#top">Haut de page ↑</a>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
 </body>
 </html>
