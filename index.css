@@ -458,6 +458,11 @@ h2 {
   white-space: nowrap;
 }
 .project-links a:hover { text-decoration: underline; text-underline-offset: 4px; }
+.project-note {
+  font-size: .85rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
 
 /* Contact */
 .contact-card {
