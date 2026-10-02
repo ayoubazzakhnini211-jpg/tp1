@@ -19,6 +19,7 @@
   --ff-display: 'Instrument Serif', Georgia, 'Times New Roman', serif;
   --ff-body: 'Inter', system-ui, -apple-system, sans-serif;
   --ff-mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  --ff-hand: 'Caveat', 'Bradley Hand', cursive;
   color-scheme: light;
 }
 
@@ -123,6 +124,29 @@ h1 em, h2 em {
 h1 {
   font-size: clamp(2.9rem, 7vw, 5.4rem);
   line-height: 1;
+}
+
+/* Trait de crayon sous le mot en italique du grand titre */
+h1 em {
+  position: relative;
+  display: inline-block;
+}
+h1 em::after {
+  content: "";
+  position: absolute;
+  left: -2%;
+  right: -2%;
+  bottom: -.12em;
+  height: .16em;
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 14' preserveAspectRatio='none'%3E%3Cpath d='M3 9 C 40 2, 70 12, 105 6 S 170 3, 197 8' fill='none' stroke='black' stroke-width='3.5' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat center / 100% 100%;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 14' preserveAspectRatio='none'%3E%3Cpath d='M3 9 C 40 2, 70 12, 105 6 S 170 3, 197 8' fill='none' stroke='black' stroke-width='3.5' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat center / 100% 100%;
+  animation: underline-in .7s ease 1s both;
+}
+
+@keyframes underline-in {
+  from { clip-path: inset(0 100% 0 0); }
+  to { clip-path: inset(0 0 0 0); }
 }
 h2 {
   font-size: clamp(2.2rem, 4.6vw, 3.6rem);
@@ -836,13 +860,65 @@ h2 {
   transform: scale(.651);
   transform-origin: 0 0;
 }
-.live-hint {
-  margin-top: 18px;
-  font-family: var(--ff-mono);
-  font-size: .7rem;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  color: var(--muted);
+/* Notes manuscrites avec flèche dessinée */
+.scribble {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  color: color-mix(in srgb, var(--accent) 72%, var(--surface));
+  pointer-events: none;
+}
+.scribble span {
+  font-family: var(--ff-hand);
+  font-size: 1.9rem;
+  font-weight: 600;
+  line-height: .92;
+  white-space: nowrap;
+  transform: rotate(-5deg);
+  transform-origin: 0 100%;
+}
+.scribble-arrow {
+  flex: none;
+  width: 76px;
+  height: auto;
+  overflow: visible;
+}
+.scribble-arrow path { stroke-dasharray: 1; }
+
+.actions--noted {
+  position: relative;
+  margin-top: 108px;
+}
+.actions--noted .scribble {
+  position: absolute;
+  left: 88px;
+  bottom: calc(100% + 2px);
+}
+.contact-panel .scribble {
+  left: calc(50% - 76px);
+  color: var(--accent-on-ink);
+  text-align: left;
+}
+
+.scribble--up {
+  align-items: flex-end;
+  margin-top: 12px;
+}
+.scribble--up span { margin-bottom: 2px; }
+
+.hero .scribble-line { animation: scribble-draw .8s ease 1s both; }
+.hero .scribble-head { animation: scribble-draw .35s ease 1.75s both; }
+.js .reveal .scribble-arrow path {
+  stroke-dashoffset: 1;
+  opacity: 0;
+}
+.js .reveal.is-visible .scribble-line { animation: scribble-draw .8s ease .5s both; }
+.js .reveal.is-visible .scribble-head { animation: scribble-draw .35s ease 1.25s both; }
+
+@keyframes scribble-draw {
+  from { stroke-dashoffset: 1; opacity: 0; }
+  15% { opacity: 1; }
+  to { stroke-dashoffset: 0; opacity: 1; }
 }
 
 /* Illustration : chaîne de publication */
@@ -1211,6 +1287,13 @@ h2 {
   .hero-text > *, .hero-visual, .float-card { animation: none; }
   .marquee-track.is-running { animation: none; }
   .js .reveal { opacity: 1; transform: none; transition: none; }
+  h1 em::after { animation: none; }
+  .scribble-arrow path,
+  .js .reveal .scribble-arrow path {
+    animation: none !important;
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
   .method-art * { animation: none !important; }
   .art-check { stroke-dashoffset: 0; }
   .art-pulse { opacity: 0; }
