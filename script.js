@@ -1,14 +1,30 @@
+const root = document.documentElement;
 const header = document.getElementById('header');
+const progress = document.getElementById('progress');
 const burger = document.getElementById('burger');
 const menu = document.getElementById('menu');
 const menuLinks = [...menu.querySelectorAll('a')];
 
 document.getElementById('year').textContent = new Date().getFullYear();
 
-// Bordure du header une fois la page défilée
-const onScroll = () => header.classList.toggle('is-scrolled', window.scrollY > 8);
+// Thème clair / sombre
+document.getElementById('theme-toggle').addEventListener('click', () => {
+  const current = root.getAttribute('data-theme')
+    || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  const next = current === 'dark' ? 'light' : 'dark';
+  root.setAttribute('data-theme', next);
+  try { localStorage.setItem('theme', next); } catch (e) {}
+});
+
+// Bordure du header et barre de progression
+const onScroll = () => {
+  header.classList.toggle('is-scrolled', window.scrollY > 8);
+  const max = root.scrollHeight - window.innerHeight;
+  progress.style.setProperty('--p', max > 0 ? window.scrollY / max : 0);
+};
 onScroll();
 window.addEventListener('scroll', onScroll, { passive: true });
+window.addEventListener('resize', onScroll);
 
 // Menu mobile
 const closeMenu = () => {
@@ -42,6 +58,22 @@ const revealObserver = new IntersectionObserver((entries, observer) => {
     entry.target.classList.add('is-visible');
     observer.unobserve(entry.target);
   });
-}, { threshold: 0.15 });
+}, { threshold: 0.1 });
 
 document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+// Bandeau défilant : le contenu est doublé pour boucler sans coupure
+const track = document.getElementById('marquee-track');
+track.innerHTML += track.innerHTML;
+track.classList.add('is-running');
+
+// Halo lumineux qui suit la souris sur les cartes
+if (window.matchMedia('(hover: hover)').matches) {
+  document.querySelectorAll('.card').forEach(card => {
+    card.addEventListener('pointermove', event => {
+      const rect = card.getBoundingClientRect();
+      card.style.setProperty('--mx', `${event.clientX - rect.left}px`);
+      card.style.setProperty('--my', `${event.clientY - rect.top}px`);
+    });
+  });
+}
