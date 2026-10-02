@@ -377,10 +377,17 @@ h2 {
 }
 
 .lead {
-  max-width: 32em;
-  margin-top: 24px;
-  font-size: 1.12rem;
+  max-width: 27em;
+  margin-top: 28px;
+  font-family: var(--ff-display);
+  font-size: clamp(1.35rem, 2vw, 1.6rem);
+  line-height: 1.32;
+  letter-spacing: -0.005em;
   color: var(--muted);
+}
+.lead strong {
+  font-weight: 400;
+  color: var(--text);
 }
 
 .stats {
