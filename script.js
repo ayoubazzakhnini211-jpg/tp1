@@ -67,6 +67,52 @@ const track = document.getElementById('marquee-track');
 track.innerHTML += track.innerHTML;
 track.classList.add('is-running');
 
+// Méthode : l'étape active illumine la partie du dessin qui lui correspond
+const method = document.getElementById('method');
+const art = document.getElementById('method-art');
+const steps = [...method.querySelectorAll('.step')];
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+let stepIndex = 0;
+let stepTimer = null;
+let userChoseStep = false;
+
+const showStep = index => {
+  stepIndex = index;
+  steps.forEach((step, i) => {
+    step.classList.toggle('is-active', i === index);
+    const button = step.querySelector('.step-btn');
+    if (i === index) button.setAttribute('aria-current', 'step');
+    else button.removeAttribute('aria-current');
+  });
+  art.dataset.active = String(index + 1);
+};
+
+const stopSteps = () => {
+  clearInterval(stepTimer);
+  stepTimer = null;
+  method.classList.remove('is-auto');
+};
+
+const startSteps = () => {
+  if (reduceMotion || userChoseStep || stepTimer) return;
+  method.classList.add('is-auto');
+  stepTimer = setInterval(() => showStep((stepIndex + 1) % steps.length), 4000);
+};
+
+steps.forEach((step, i) => {
+  step.querySelector('.step-btn').addEventListener('click', () => {
+    userChoseStep = true;
+    stopSteps();
+    showStep(i);
+  });
+});
+
+new IntersectionObserver(entries => {
+  entries.forEach(entry => (entry.isIntersecting ? startSteps() : stopSteps()));
+}, { threshold: 0.25 }).observe(method);
+
+if (reduceMotion) art.querySelector('svg').pauseAnimations();
+
 // Halo lumineux qui suit la souris sur les cartes
 if (window.matchMedia('(hover: hover)').matches) {
   document.querySelectorAll('.card').forEach(card => {
