@@ -575,13 +575,14 @@ h2 {
   .facts dd { text-align: left; }
 
   .project {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 12px;
   }
   .project-links {
     flex-direction: row;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 20px;
+    gap: 6px 20px;
   }
 
   .contact-card { padding: 44px 24px; }
