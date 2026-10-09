@@ -35,7 +35,8 @@ const english = {
   'work.eyebrow': '<span>01</span>Work',
   'work.title': 'What I’ve <em>built</em>.',
   'work.intro': 'A company website delivered during my internship, a web app currently in development, a thoroughly tested piece of software and the portfolio you are reading right now.',
-  'work.source': 'Source code ↗',
+  'work.source': 'Source code',
+  'a11y.newTab': '(opens in a new tab)',
 
   'spec.role': 'Role',
   'spec.result': 'Result',
@@ -56,7 +57,7 @@ const english = {
   'ayron.title': 'Ayron: gold and metal prices, in dirhams',
   'ayron.text': 'A full-stack web app that shows near real-time prices for gold (24 and 18 karat), silver and copper in Moroccan dirhams, with price changes, history and explanations. It is built for individuals, jewelers, artisans and small investors in Morocco.',
   'ayron.ai': 'Built with the help of AI tools (Claude Code).',
-  'ayron.case': 'Read the case study →',
+  'ayron.case': 'Read the case study',
   'ayron.role': 'Personal project: design, development and testing',
   'ayron.result': 'Real prices converted to dirhams, validated data, 33 unit tests',
   'ayron.access': 'Demo coming soon: runs locally, launch coming up',
@@ -68,7 +69,7 @@ const english = {
   'work2.ai': 'Built with the help of AI tools (Claude Code), splitting the work across several specialized agents.',
   'work2.role': 'Personal project: design, development and testing',
   'work2.result': '3 versions and over 160 automated tests',
-  'work2.try': 'Try it online ↗',
+  'work2.try': 'Try it online',
 
   'work3.live': 'live',
   'work3.meta': 'Coursework · 2026',
@@ -77,7 +78,7 @@ const english = {
   'work3.ai': 'Built with the help of AI tools (Claude Code).',
   'work3.role': 'Design, development and deployment',
   'work3.result': 'A fast, bilingual site, published with every change',
-  'work3.view': 'View the site ↗',
+  'work3.view': 'View the site',
 
   'about.eyebrow': '<span>02</span>About',
   'about.title': 'I learn by building <em>real</em> projects.',
