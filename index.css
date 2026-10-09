@@ -145,14 +145,36 @@ button { font: inherit; color: inherit; }
 .rail { grid-column: 1 / span 3; }
 .main-col { grid-column: 4 / -1; }
 
-.skip { position: absolute; left: -9999px; }
-.skip:focus {
-  left: 16px;
-  top: 16px;
+/* Lien « Aller au contenu » : invisible, il apparaît juste sous le header quand on navigue
+   au clavier, avec le style des boutons du site, sans recouvrir le nom ni le menu */
+.skip {
+  position: fixed;
+  top: 76px;
+  left: 50%;
   z-index: 300;
-  padding: 8px 14px;
-  background: var(--surface);
-  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  height: 36px;
+  padding: 0 16px;
+  font-size: .875rem;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  white-space: nowrap;
+  color: var(--on-ink);
+  background: var(--ink);
+  border-radius: 999px;
+  box-shadow: 0 1px 2px rgba(18, 19, 23, .16), 0 8px 24px -12px rgba(18, 19, 23, .4);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -6px);
+  transition: opacity .2s var(--ease), transform .25s var(--ease);
+}
+.skip:focus {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(-50%, 0);
+  outline-offset: 2px;
+  border-radius: 999px;
 }
 
 /* Typographie */
@@ -556,6 +578,7 @@ a:focus-visible > .arrow--up .arrow-head { transform: none; }
 .btn:active { transform: scale(.98); }
 
 @media (prefers-reduced-motion: reduce) {
+  .skip,
   .btn,
   .menu a,
   .menu .menu-cta,
@@ -1822,6 +1845,13 @@ dl.cv-list .cv-text {
 }
 
 @media (max-width: 600px) {
+  /* L'accueil commence plus haut sur téléphone : le lien d'évitement se fait plus compact */
+  .skip {
+    top: 68px;
+    height: 32px;
+    padding: 0 14px;
+    font-size: .8125rem;
+  }
   .hero { padding: 40px 0 64px; }
   .hero h1 { margin-top: 16px; }
   .lead { margin-top: 20px; }
