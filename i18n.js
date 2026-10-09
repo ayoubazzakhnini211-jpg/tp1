@@ -17,7 +17,7 @@ const english = {
 
   'hero.role': 'Web developer',
   'hero.title': 'I build clear, fast and <em>carefully crafted</em> websites.',
-  'hero.lead': 'A Software Engineering student, I build websites with HTML, CSS and JavaScript, or with WordPress when the project calls for it. I write readable code, test what I ship and check every screen, from phone to desktop.',
+  'hero.lead': 'A Software Engineering student, I build websites and web applications, from WordPress showcase sites to Next.js&nbsp;apps. I write readable code, test what I ship and check every screen, on mobile and desktop alike.',
   'hero.cta': 'See my work',
   'hero.portrait': 'Portrait of Ayoub Azzakhnini',
   'hero.education': 'Education',
