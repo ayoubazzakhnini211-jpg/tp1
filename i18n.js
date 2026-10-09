@@ -129,7 +129,7 @@ const english = {
   'contact.copied': 'Address copied',
 
   'footer.note': 'Designed and built with HTML, CSS and JavaScript, without a framework.',
-  'footer.top': 'Back to top ↑',
+  'footer.top': 'Back to top',
 
   // Étude de cas : projets/ayron.html
   'case.meta.title': 'Ayron · Case study · Ayoub Azzakhnini',

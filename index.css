@@ -234,7 +234,7 @@ h2 {
   overflow: visible;
   fill: none;
   stroke: currentColor;
-  stroke-width: 1.6;
+  stroke-width: 1.5;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
@@ -255,6 +255,18 @@ a:hover > .arrow--out,
 a:focus-visible > .arrow--out { transform: translate(2px, -2px); }
 a:hover > .arrow--out .arrow-head,
 a:focus-visible > .arrow--out .arrow-head { transform: none; }
+
+/* Retour : la pointe part vers la gauche */
+a:hover > .arrow--back .arrow-head,
+a:focus-visible > .arrow--back .arrow-head { transform: translateX(-3px); }
+
+/* Haut de page : flèche entière, qui monte au survol */
+.arrow--up { transition: transform .2s var(--ease); }
+.arrow--up .arrow-line { opacity: 1; }
+a:hover > .arrow--up,
+a:focus-visible > .arrow--up { transform: translateY(-2px); }
+a:hover > .arrow--up .arrow-head,
+a:focus-visible > .arrow--up .arrow-head { transform: none; }
 
 /* Le contour de focus suit la forme arrondie des boutons */
 .btn:focus-visible,
@@ -347,8 +359,8 @@ a:focus-visible > .arrow--out .arrow-head { transform: none; }
   transition: background-color .25s var(--ease), border-color .25s var(--ease), color .25s var(--ease);
 }
 .menu .menu-cta:hover {
-  background: color-mix(in srgb, var(--text) 5%, var(--surface));
-  border-color: color-mix(in srgb, var(--text) 35%, transparent);
+  background: color-mix(in srgb, var(--text) 4%, var(--surface));
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--line-strong));
 }
 
 .nav-actions {
@@ -426,11 +438,16 @@ a:focus-visible > .arrow--out .arrow-head { transform: none; }
 /* Avec une flèche à droite : un peu plus d'air côté texte, pour un équilibre optique */
 .btn:has(> .arrow:last-child) { padding: 0 20px 0 24px; }
 /* Avec une icône à gauche (GitHub) : l'inverse */
-.btn:has(> svg:first-child:not(.arrow)) { padding: 0 22px 0 19px; }
+.btn:has(> svg:first-child:not(.arrow)) {
+  gap: 8px;
+  padding: 0 22px 0 19px;
+}
+/* Logo à 16 px : la grille d'origine des icônes GitHub, net à l'écran */
 .btn > svg:not(.arrow) {
   flex: none;
   width: 16px;
   height: 16px;
+  transition: color .25s var(--ease);
 }
 
 /* Un liseré clair en haut et une ombre d'un pixel : le bouton a de la matière, sans effet lourd */
@@ -454,10 +471,12 @@ a:focus-visible > .arrow--out .arrow-head { transform: none; }
 @media (hover: hover) {
   /* Une pointe de bleu dans le noir, la couleur d'accent du site */
   .btn-primary:hover { background: color-mix(in srgb, var(--ink) 88%, var(--accent)); }
+  /* Accent bleu discret : la bordure bleuit et le logo prend la couleur d'accent */
   .btn-secondary:hover {
-    background: color-mix(in srgb, var(--text) 5%, var(--surface));
-    border-color: color-mix(in srgb, var(--text) 35%, transparent);
+    background: color-mix(in srgb, var(--text) 4%, var(--surface));
+    border-color: color-mix(in srgb, var(--accent) 45%, var(--line-strong));
   }
+  .btn-secondary:hover > svg:not(.arrow) { color: var(--accent); }
   .btn-invert:hover { background: color-mix(in srgb, var(--on-ink) 88%, var(--accent-on-ink)); }
 }
 
@@ -471,7 +490,9 @@ a:focus-visible > .arrow--out .arrow-head { transform: none; }
   .arrow-line,
   .arrow-head { transition: none; }
   .btn:active,
-  a:hover > .arrow--out { transform: none; }
+  a:hover > .arrow--out,
+  a:hover > .arrow--up,
+  a:hover > .arrow--back .arrow-head { transform: none; }
 }
 
 /* Fiche d'informations (légende de la photo, détails des projets) */
@@ -1466,7 +1487,7 @@ dl.cv-list .cv-text {
   height: 14px;
   fill: none;
   stroke: currentColor;
-  stroke-width: 1.8;
+  stroke-width: 2.2;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
@@ -1513,6 +1534,7 @@ dl.cv-list .cv-text {
   background: none;
 }
 .footer-inner > .link:hover { color: var(--on-ink); }
+.footer-inner > .link-arrow { justify-content: flex-end; }
 
 /* Apparition au défilement */
 .js .reveal {
@@ -1697,6 +1719,7 @@ dl.cv-list .cv-text {
     text-align: left;
     margin-top: 10px;
   }
+  .footer-inner > .link-arrow { justify-content: flex-start; }
 }
 
 @media (max-width: 600px) {
@@ -1769,12 +1792,6 @@ dl.cv-list .cv-text {
   transition: color .2s ease;
 }
 .case-back:hover { color: var(--text); }
-.case-back svg {
-  width: 16px;
-  height: 16px;
-  transition: transform .25s var(--ease);
-}
-.case-back:hover svg { transform: translateX(-3px); }
 
 .case-intro {
   align-items: end;
@@ -1940,9 +1957,6 @@ dl.cv-list .cv-text {
 .case-end h2 { max-width: 13em; }
 .case-end .actions { margin-top: 32px; }
 
-@media (prefers-reduced-motion: reduce) {
-  .case-back svg { transition: none; }
-}
 
 @media (max-width: 860px) {
   .case-text,
