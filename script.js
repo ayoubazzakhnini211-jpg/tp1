@@ -136,7 +136,11 @@ const sectionObserver = new IntersectionObserver(entries => {
   entries.forEach(entry => {
     if (!entry.isIntersecting) return;
     menuLinks.forEach(link => {
-      link.classList.toggle('is-active', link.getAttribute('href') === `#${entry.target.id}`);
+      const current = link.getAttribute('href') === `#${entry.target.id}`;
+      link.classList.toggle('is-active', current);
+      // Les lecteurs d'écran annoncent aussi la section en cours
+      if (current) link.setAttribute('aria-current', 'location');
+      else link.removeAttribute('aria-current');
     });
   });
 }, { rootMargin: '-45% 0px -50% 0px' });

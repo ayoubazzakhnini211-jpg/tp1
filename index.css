@@ -311,6 +311,7 @@ a:focus-visible > .arrow--up .arrow-head { transform: none; }
   display: inline-flex;
   align-items: center;
   gap: 10px;
+  white-space: nowrap;
   font-size: .9375rem;
   font-weight: 600;
   letter-spacing: -0.01em;
@@ -329,6 +330,7 @@ a:focus-visible > .arrow--up .arrow-head { transform: none; }
   line-height: 1;
 }
 
+/* Navigation : chaque lien porte le numéro de sa section, comme les titres de la page */
 .menu {
   display: flex;
   align-items: center;
@@ -337,20 +339,62 @@ a:focus-visible > .arrow--up .arrow-head { transform: none; }
   font-size: .875rem;
 }
 .menu a {
+  border-radius: 6px;
+  transition: color .25s var(--ease);
+}
+.menu a:not(.menu-cta) {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
   padding: 8px 12px;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  white-space: nowrap;
   color: var(--muted);
-  border-radius: 8px;
-  transition: color .2s ease, background-color .2s ease, border-color .2s ease;
+}
+.menu-num {
+  font-size: .6875rem;
+  letter-spacing: .02em;
+  font-variant-numeric: tabular-nums;
+  transition: color .25s var(--ease);
+}
+/* Au survol, un trait fin se dessine sous le mot, de gauche à droite */
+.menu-label { position: relative; }
+.menu-label::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -3px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right center;
+  transition: transform .35s var(--ease), background-color .25s var(--ease);
 }
 .menu a:hover,
 .menu a.is-active { color: var(--text); }
-/* Contact : se détache du menu par un fond clair, sans concurrencer le bouton principal */
+.menu a:hover .menu-label::after,
+.menu a:focus-visible .menu-label::after {
+  transform: scaleX(1);
+  transform-origin: left center;
+}
+/* Section en cours de lecture : numéro et trait en bleu */
+.menu a.is-active .menu-num,
+.menu a:hover .menu-num { color: var(--accent); }
+.menu a.is-active .menu-label::after {
+  transform: scaleX(1);
+  background: var(--accent);
+}
+
+/* Contact : pilule claire et pastille sombre avec une flèche, qui passe au bleu au survol */
 .menu .menu-cta {
   display: inline-flex;
   align-items: center;
-  height: 38px;
-  margin-left: 12px;
-  padding: 0 18px;
+  gap: 10px;
+  height: 36px;
+  margin-left: 14px;
+  padding: 0 4px 0 15px;
   font-weight: 500;
   color: var(--text);
   background: var(--surface);
@@ -358,17 +402,45 @@ a:focus-visible > .arrow--up .arrow-head { transform: none; }
   border-radius: 999px;
   transition: background-color .25s var(--ease), border-color .25s var(--ease), color .25s var(--ease);
 }
-.menu .menu-cta:hover {
+.menu-cta-icon {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  color: var(--on-ink);
+  background: var(--ink);
+  border-radius: 50%;
+  transition: background-color .25s var(--ease), color .25s var(--ease);
+}
+.menu-cta-icon .arrow {
+  width: 9px;
+  height: 9px;
+  transition: transform .25s var(--ease);
+}
+.menu-cta-icon .arrow-line { opacity: 1; }
+.menu .menu-cta:hover,
+.menu .menu-cta.is-active {
   background: color-mix(in srgb, var(--text) 4%, var(--surface));
   border-color: color-mix(in srgb, var(--accent) 45%, var(--line-strong));
 }
+.menu .menu-cta:hover .menu-cta-icon,
+.menu .menu-cta:focus-visible .menu-cta-icon { background: var(--accent); }
+.menu .menu-cta:hover .arrow,
+.menu .menu-cta:focus-visible .arrow { transform: translateX(2px); }
 
+/* Langue et thème : séparés du menu par un trait court, centré sur la ligne */
 .nav-actions {
   display: flex;
   align-items: center;
   gap: 2px;
-  padding-left: 12px;
-  border-left: 1px solid var(--line);
+  padding-left: 14px;
+}
+.nav-actions::before {
+  content: "";
+  width: 1px;
+  height: 18px;
+  margin-right: 8px;
+  background: var(--line-strong);
 }
 
 .icon-btn,
@@ -393,7 +465,7 @@ a:focus-visible > .arrow--up .arrow-head { transform: none; }
 .lang-btn {
   font-size: .75rem;
   font-weight: 600;
-  letter-spacing: .04em;
+  letter-spacing: .06em;
 }
 .icon-sun { display: var(--icon-sun); }
 .icon-moon { display: var(--icon-moon); }
@@ -485,7 +557,11 @@ a:focus-visible > .arrow--up .arrow-head { transform: none; }
 
 @media (prefers-reduced-motion: reduce) {
   .btn,
+  .menu a,
   .menu .menu-cta,
+  .menu-num,
+  .menu-label::after,
+  .menu-cta-icon,
   .arrow,
   .arrow-line,
   .arrow-head { transition: none; }
@@ -1594,6 +1670,8 @@ dl.cv-list .cv-text {
     gap: 2px;
   }
 
+  .menu-num { display: none; }
+
   .rail,
   .main-col { grid-column: 1 / -1; }
   .section-head { margin-bottom: 48px; }
@@ -1629,8 +1707,8 @@ dl.cv-list .cv-text {
   .nav-actions {
     margin-left: auto;
     padding-left: 0;
-    border-left: 0;
   }
+  .nav-actions::before { display: none; }
   .menu {
     position: absolute;
     top: 64px;
@@ -1646,23 +1724,44 @@ dl.cv-list .cv-text {
     border-bottom: 1px solid var(--line);
   }
   .menu.is-open { display: flex; }
-  .menu a {
+  .menu a:not(.menu-cta) {
+    gap: 12px;
     padding: 14px 0;
     font-size: 1rem;
     color: var(--text);
     border-bottom: 1px solid var(--line);
     border-radius: 0;
   }
+  .menu-num {
+    display: inline;
+    min-width: 1.5em;
+    font-size: .75rem;
+    color: var(--muted);
+  }
+  .menu-label::after { display: none; }
   .menu .menu-cta {
-    justify-content: center;
-    height: 48px;
+    justify-content: space-between;
+    height: 52px;
     margin: 16px 0 0;
+    padding: 0 6px 0 20px;
+    font-size: 1rem;
     color: var(--on-ink);
     background: var(--ink);
     border: 0;
-    border-radius: 999px;
   }
-  .menu .menu-cta:hover { background: color-mix(in srgb, var(--ink) 88%, var(--accent)); }
+  .menu-cta-icon {
+    width: 40px;
+    height: 40px;
+    color: var(--ink);
+    background: var(--on-ink);
+  }
+  .menu-cta-icon .arrow {
+    width: 11px;
+    height: 11px;
+  }
+  .menu .menu-cta:hover,
+  .menu .menu-cta.is-active { background: color-mix(in srgb, var(--ink) 88%, var(--accent)); }
+  .menu .menu-cta:hover .menu-cta-icon { color: var(--on-ink); }
 
   .hero-text,
   .portrait { grid-column: 1 / -1; }
