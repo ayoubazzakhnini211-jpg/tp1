@@ -332,21 +332,23 @@ a:focus-visible > .arrow--out .arrow-head { transform: none; }
 }
 .menu a:hover,
 .menu a.is-active { color: var(--text); }
+/* Contact : se détache du menu par un fond clair, sans concurrencer le bouton principal */
 .menu .menu-cta {
   display: inline-flex;
   align-items: center;
-  height: 36px;
+  height: 38px;
   margin-left: 12px;
-  padding: 0 16px;
+  padding: 0 18px;
   font-weight: 500;
   color: var(--text);
+  background: var(--surface);
   border: 1px solid var(--line-strong);
   border-radius: 999px;
+  transition: background-color .25s var(--ease), border-color .25s var(--ease), color .25s var(--ease);
 }
 .menu .menu-cta:hover {
-  color: var(--on-ink);
-  background: var(--ink);
-  border-color: var(--ink);
+  background: color-mix(in srgb, var(--text) 5%, var(--surface));
+  border-color: color-mix(in srgb, var(--text) 35%, transparent);
 }
 
 .nav-actions {
@@ -398,7 +400,7 @@ a:focus-visible > .arrow--out .arrow-head { transform: none; }
 .burger[aria-expanded="true"] span:first-child { transform: translateY(3.25px) rotate(45deg); }
 .burger[aria-expanded="true"] span:last-child { transform: translateY(-3.25px) rotate(-45deg); }
 
-/* Boutons : forme pilule, relief discret, léger soulèvement au survol */
+/* Boutons : forme pilule et relief très léger. Au survol, seuls le fond et la flèche bougent */
 .actions {
   display: flex;
   flex-wrap: wrap;
@@ -419,65 +421,55 @@ a:focus-visible > .arrow--out .arrow-head { transform: none; }
   white-space: nowrap;
   border: 1px solid transparent;
   border-radius: 999px;
-  transition: background-color .2s ease, border-color .2s ease, color .2s ease, box-shadow .25s var(--ease), transform .25s var(--ease);
+  transition: background-color .25s var(--ease), border-color .25s var(--ease), color .25s var(--ease), transform .15s var(--ease);
 }
+/* Avec une flèche à droite : un peu plus d'air côté texte, pour un équilibre optique */
+.btn:has(> .arrow:last-child) { padding: 0 20px 0 24px; }
+/* Avec une icône à gauche (GitHub) : l'inverse */
+.btn:has(> svg:first-child:not(.arrow)) { padding: 0 22px 0 19px; }
 .btn > svg:not(.arrow) {
   flex: none;
   width: 16px;
   height: 16px;
 }
 
+/* Un liseré clair en haut et une ombre d'un pixel : le bouton a de la matière, sans effet lourd */
 .btn-primary {
   color: var(--on-ink);
   background: var(--ink);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, .14),
-    0 1px 2px rgba(18, 19, 23, .14),
-    0 8px 18px -10px rgba(18, 19, 23, .45);
+    inset 0 1px 0 rgba(255, 255, 255, .12),
+    0 1px 2px rgba(18, 19, 23, .16);
 }
 .btn-secondary {
   color: var(--text);
-  background: color-mix(in srgb, var(--surface) 70%, transparent);
+  background: var(--surface);
   border-color: var(--line-strong);
-  box-shadow: var(--shadow-sm);
 }
 .btn-invert {
   color: var(--ink);
   background: var(--on-ink);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, .3),
-    0 8px 18px -10px rgba(0, 0, 0, .5);
 }
 
 @media (hover: hover) {
-  .btn:hover { transform: translateY(-1px); }
   /* Une pointe de bleu dans le noir, la couleur d'accent du site */
-  .btn-primary:hover {
-    background: color-mix(in srgb, var(--ink) 86%, var(--accent));
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, .14),
-      0 2px 4px rgba(18, 19, 23, .14),
-      0 14px 28px -12px rgba(18, 19, 23, .5);
-  }
+  .btn-primary:hover { background: color-mix(in srgb, var(--ink) 88%, var(--accent)); }
   .btn-secondary:hover {
-    background: var(--surface);
-    border-color: var(--text);
+    background: color-mix(in srgb, var(--text) 5%, var(--surface));
+    border-color: color-mix(in srgb, var(--text) 35%, transparent);
   }
   .btn-invert:hover { background: color-mix(in srgb, var(--on-ink) 88%, var(--accent-on-ink)); }
 }
 
-/* Après le survol, pour que l'appui l'emporte */
-.btn:active {
-  transform: scale(.98);
-  transition-duration: .08s;
-}
+/* Appui : le bouton s'enfonce à peine */
+.btn:active { transform: scale(.98); }
 
 @media (prefers-reduced-motion: reduce) {
   .btn,
+  .menu .menu-cta,
   .arrow,
   .arrow-line,
   .arrow-head { transition: none; }
-  .btn:hover,
   .btn:active,
   a:hover > .arrow--out { transform: none; }
 }
@@ -1648,6 +1640,7 @@ dl.cv-list .cv-text {
     border: 0;
     border-radius: 999px;
   }
+  .menu .menu-cta:hover { background: color-mix(in srgb, var(--ink) 88%, var(--accent)); }
 
   .hero-text,
   .portrait { grid-column: 1 / -1; }
